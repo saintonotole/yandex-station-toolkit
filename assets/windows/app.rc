@@ -1,0 +1,9 @@
+// Windows resource script for Yandex Station ToolKit.
+// Wails v2 on Windows loads the window icon from resource ID 3
+// (AppIconID = 3 in internal/frontend/desktop/windows/winc/app.go),
+// so the icon MUST be at ID 3 — a default `rsrc -ico` puts it at ID 1
+// and the window falls back to a generic icon.
+3 ICON "icon.ico"
+
+// Manifest at resource type 24 (RT_MANIFEST), ID 1.
+1 24 "app.manifest"

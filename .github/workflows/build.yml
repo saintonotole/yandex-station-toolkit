@@ -1,0 +1,171 @@
+name: build
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      # Runs on the host toolchain: no GOOS here, `go run` must execute.
+      - name: Generate Windows resources (.syso)
+        run: >
+          go run -mod=mod scripts/make_syso.go
+          -ico assets/windows/icon.ico -manifest assets/windows/app.manifest
+          -version "${GITHUB_REF_NAME}"
+          -o resource_windows_amd64.syso
+
+      - name: Build Windows executable
+        env:
+          CGO_ENABLED: "0"
+          GOOS: windows
+          GOARCH: amd64
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          go build -trimpath -tags production \
+            -ldflags "-s -w -H windowsgui -X main.version=${VERSION}" \
+            -o "dist/Yandex Station ToolKit.exe" .
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: Yandex-Station-ToolKit-windows-amd64
+          path: dist/Yandex Station ToolKit.exe
+          if-no-files-found: error
+
+  windows-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      # Runs on the host toolchain: no GOOS here, `go run` must execute.
+      - name: Generate Windows resources (.syso)
+        run: >
+          go run -mod=mod scripts/make_syso.go
+          -ico assets/windows/icon.ico -manifest assets/windows/app.manifest
+          -arch arm64
+          -version "${GITHUB_REF_NAME}"
+          -o resource_windows_arm64.syso
+
+      - name: Build Windows arm64 executable
+        env:
+          CGO_ENABLED: "0"
+          GOOS: windows
+          GOARCH: arm64
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          go build -trimpath -tags production \
+            -ldflags "-s -w -H windowsgui -X main.version=${VERSION}" \
+            -o "dist/Yandex Station ToolKit-windows-arm64.exe" .
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: Yandex-Station-ToolKit-windows-arm64
+          path: dist/Yandex Station ToolKit-windows-arm64.exe
+          if-no-files-found: error
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Install Linux GUI build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
+
+      - name: Build Linux executable
+        env:
+          CGO_ENABLED: "1"
+          GOOS: linux
+          GOARCH: amd64
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          go build -trimpath -tags production,webkit2_41 \
+            -ldflags "-s -w -X main.version=${VERSION}" \
+            -o build/yandex-station-toolkit .
+
+      # Bundles WebKitGTK and its closure beside the binary (see the script
+      # header) so the app boots on systems that ship no webkit2gtk, such as
+      # Bazzite/Steam Deck.
+      - name: Package the Linux build
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          BIN=build/yandex-station-toolkit bash scripts/package-linux-libs.sh "$VERSION"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: Yandex-Station-ToolKit-linux-amd64
+          path: dist/Yandex Station ToolKit-linux-amd64.tar.zst
+          if-no-files-found: error
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Build macOS universal .app bundle
+        # The macOS SDK targets both arches from one runner. The framework
+        # flag works around a missing UTType symbol on newer Xcode SDKs:
+        # https://wails.io/docs/guides/troubleshooting/
+        # The app is wrapped in a .app bundle (not a bare executable) and ad
+        # hoc signed, which macOS Local Network privacy requires to show the
+        # permission prompt: https://developer.apple.com/documentation/technotes/tn3179-understanding-local-network-privacy
+        run: bash scripts/build-macos-app.sh "${GITHUB_REF_NAME}"
+
+      - name: Zip the .app bundle
+        run: |
+          cd dist
+          ditto -c -k --sequesterRsrc --keepParent "Yandex Station ToolKit.app" "Yandex Station ToolKit-macos.zip"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: Yandex-Station-ToolKit-macos-universal
+          path: dist/Yandex Station ToolKit-macos.zip
+          if-no-files-found: error
+
+  release:
+    needs: [windows, windows-arm64, linux, macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Release
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+        with:
+          files: |
+            dist/Yandex Station ToolKit.exe
+            dist/Yandex Station ToolKit-windows-arm64.exe
+            dist/Yandex Station ToolKit-linux-amd64.tar.zst
+            dist/Yandex Station ToolKit-macos.zip

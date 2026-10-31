@@ -1,0 +1,41 @@
+{
+  "status": "ok",
+  "subscription": { "mode": "transaction" },
+  "config": {
+    "account_config": {
+      "spotter": "alisa",
+      "smartActivation": true,
+      "jingle": true,
+      "intonationSpotting": {},
+      "contentAccess": "without",
+      "childContentAccess": "children",
+      "aliceProactivity": true,
+      "useRichModelForPro": true,
+      "saveHistoryUsage": true
+    },
+    "device_config": {
+      "name": "quasar",
+      "locale": "ru-RU",
+      "beta": false,
+      "tv_beta": false,
+      "dndMode": { "enabled": false, "features": { "allowIncomingCalls": false } }
+    },
+    "system_config": {
+      "quasmodrom_group": "production",
+      "quasmodrom_subgroup": "production",
+      "shouldCheckWifi": false,
+      "onlineSpotterEnabled": true,
+      "useVinsRequestProto": true,
+      "sendVinsRequestProto": true,
+      "syncd": { "pollPeriodSec": 1800 },
+      "spotterRecognizer": { "maxRecognitionTime": 3000 },
+      "wifiSettings": { "generate204": { "periodSec": 300 }, "wifiReportWindowSec": 0 },
+      "unbound": {
+        "enable": true,
+        "checkHosts": ["quasar.yandex.net", "uniproxy.alice.yandex.net", "scbh.yandex.net"],
+        "forwarders": ["77.88.8.1", "77.88.8.8", "77.88.8.88", "77.88.8.2"]
+      }
+    }
+  },
+  "adbd": { "remoteActivation": true, "network": true, "fullDurationMs": 31536000000 }
+}

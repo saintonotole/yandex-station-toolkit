@@ -1,0 +1,20 @@
+/dist/
+/.tmp/
+*.zip
+*.test
+*.out
+coverage.*
+*.coverprofile
+profile.cov
+go.work
+go.work.sum
+.env
+
+# Windows resources object generated at build time from committed assets
+# (assets/windows/icon.ico + app.manifest) by scripts/make_syso.go.
+/resource_windows_amd64.syso
+
+# Runtime payloads under payloads/ are intentionally versioned so the
+# standalone repository builds without the former wiki repository.
+.claude
+.impeccable
