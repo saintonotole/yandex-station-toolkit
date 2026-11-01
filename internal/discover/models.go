@@ -33,7 +33,7 @@ var models = []Model{
 	},
 	{
 		Retail: "Станция Лайт 2", SKU: "YNDX-00026 / YNDX-00028",
-		Compat: "yandex,plum", Platform: "yandexplum",
+		Compat: "yandex,plum", Platform: "plum",
 		// The APK palette: the clock SKU (YNDX-00026) and the plain one
 		// (YNDX-00028) share it; clock keys pick the clock renders.
 		Colors: []string{"blue", "coral", "gray", "green", "lilac", "pink",
@@ -58,8 +58,8 @@ var models = []Model{
 	{
 		Retail: "Станция Мини", SKU: "YNDX-0004",
 		// 1st gen shares the generic AXG device-tree; no yandex compat.
-		// The mDNS platform spelling ("yandexmini"/"yandexminni") is not
-		// documented anywhere authoritative; the substring rule matches both.
+		// Platform verified from the official Mini firmware's quasar.cfg
+		// (deviceType "yandexmini").
 		Compat: "amlogic,axg", Platform: "yandexmini",
 		Colors: []string{"black", "white"},
 		Icon:   "mini_black.png",
@@ -67,7 +67,7 @@ var models = []Model{
 	},
 	{
 		Retail: "Станция Мини 2", SKU: "YNDX-00020 / YNDX-00021",
-		Compat: "yandex,station-mini2", Platform: "yandexmini2",
+		Compat: "yandex,station-mini2", Platform: "yandexmini_2",
 		// YNDX-00020 is the clock SKU, YNDX-00021 the plain one; the mDNS
 		// data does not tell them apart, so the clock variants are
 		// selectable like colors.
@@ -87,7 +87,7 @@ var models = []Model{
 	},
 	{
 		Retail: "Станция Мини 3", SKU: "YNDX-00027",
-		Compat: "yandex,station-mini3", Platform: "yandexbergamot",
+		Compat: "yandex,station-mini3", Platform: "bergamot",
 		Colors: []string{"black", "gray", "violet"},
 		Icon:   "bergamot_black.png",
 		Icons: map[string]string{
@@ -98,7 +98,7 @@ var models = []Model{
 	},
 	{
 		Retail: "Станция Мини 3 Про", SKU: "YNDX-00059",
-		Compat: "yandex,pickle-evt", Platform: "yandexpickle",
+		Compat: "yandex,pickle-evt", Platform: "pickle",
 		Colors: []string{"black", "blue", "gray", "green", "violet"},
 		Icon:   "pickle_black.png",
 		Icons: map[string]string{
@@ -126,8 +126,8 @@ var models = []Model{
 	{
 		// retail "Станция Миди" = codename Cucumber (wiki).
 		Retail: "Станция Миди", SKU: "YNDX-00054",
-		Compat: "yandex,cucumber", Platform: "yandexcucumber",
-		Hostname: "yandexcucumber",
+		Compat: "yandex,cucumber", Platform: "cucumber",
+		Hostname: "yandex-station-midi",
 		Colors:   []string{"black", "gray", "orange", "raspberry", "turquoise"},
 		Icon:     "cucumber_black.png",
 		Icons: map[string]string{
@@ -140,7 +140,7 @@ var models = []Model{
 	},
 	{
 		Retail: "Станция Стрит", SKU: "YNDX-00030",
-		Compat: "yandex,station-mango", Platform: "yandexmango",
+		Compat: "yandex,station-mango", Platform: "mango",
 		Hostname: "yandexmango",
 		Colors:   []string{"black", "gray", "green", "orange", "violet"},
 		Icon:     "mango_black.png",
@@ -154,7 +154,7 @@ var models = []Model{
 	},
 	{
 		Retail: "Станция Дуо Макс", SKU: "YNDX-00055",
-		Compat: "yandex,station-chiron", Platform: "yandexchiron",
+		Compat: "yandex,station-chiron", Platform: "chiron",
 		Colors: []string{"beige", "black", "green", "red"},
 		Icon:   "chiron_black.png",
 		Icons: map[string]string{
@@ -166,7 +166,7 @@ var models = []Model{
 	},
 	{
 		Retail: "Станция 3", SKU: "YNDX-00060",
-		Compat: "yandex,station-orion", Platform: "yandexorion",
+		Compat: "yandex,station-orion", Platform: "orion",
 		Colors: []string{"black", "gray", "violet"},
 		Icon:   "orion_black.png",
 		Icons: map[string]string{
@@ -177,7 +177,7 @@ var models = []Model{
 	},
 	{
 		Retail: "Умный хаб", SKU: "",
-		Compat: "yandex,saturn", Platform: "yandexsaturn",
+		Compat: "yandex,saturn", Platform: "saturn",
 		Hostname: "yandexsaturn",
 	},
 	{

@@ -94,8 +94,8 @@ const (
 	yamPanelPkg   = "yam/luna" // the web panel package
 )
 
-// Platform profiles shipped by YAM; the mDNS platform marker of every model
-// maps onto one of them directly.
+// Platform profiles shipped by YAM; the quasar.cfg deviceType of every
+// model maps onto one of them directly.
 var yamProfiles = []string{
 	"yandexmicro", "plum", "yandexplum", "yandexmini", "yandexmini_2",
 	"bergamot", "pickle", "cucumber", "yandexmidi", "mango",
@@ -103,24 +103,14 @@ var yamProfiles = []string{
 }
 
 // yamProfileFor maps the app's mDNS platform marker onto a YAM platform
-// profile. The names agree for most models; the odd ones out are the mDNS
-// spellings (yandexminni, yandexmini2, yandexbergamot, yandexpickle).
+// profile. The names are the quasar.cfg deviceType values; YAM ships a
+// profile for each of them.
 func yamProfileFor(platform string) (string, error) {
 	p := strings.ToLower(strings.TrimSpace(platform))
 	for _, profile := range yamProfiles {
 		if p == profile {
 			return profile, nil
 		}
-	}
-	switch p {
-	case "yandexminni":
-		return "yandexmini", nil
-	case "yandexmini2":
-		return "yandexmini_2", nil
-	case "yandexbergamot":
-		return "bergamot", nil
-	case "yandexpickle":
-		return "pickle", nil
 	}
 	return "", fmt.Errorf("YAM has no platform profile for %q; supported: %s",
 		platform, strings.Join(yamProfiles, ", "))

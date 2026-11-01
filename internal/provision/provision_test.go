@@ -339,24 +339,22 @@ func TestYAMChecksumsAndProfiles(t *testing.T) {
 	if _, ok := checksumFor(sums, "betteryamd-yandexstationmini-armv7-linux"); !ok {
 		t.Fatal("star prefix not accepted")
 	}
-	// The mDNS platform markers map onto the YAM profile ids; the odd
-	// spellings (yandexminni, yandexmini2, yandexbergamot, yandexpickle)
-	// have explicit translations.
+	// The quasar.cfg deviceType values map onto the YAM profile ids.
 	for platform, want := range map[string]string{
-		"yandexmicro":    "yandexmicro",
-		"yandexplum":     "yandexplum",
-		"yandexmidi":     "yandexmidi",
-		"yandexminni":    "yandexmini",
-		"yandexmini2":    "yandexmini_2",
-		"yandexbergamot": "bergamot",
-		"yandexpickle":   "pickle",
+		"yandexmicro":  "yandexmicro",
+		"plum":         "plum",
+		"yandexmidi":   "yandexmidi",
+		"yandexmini":   "yandexmini",
+		"yandexmini_2": "yandexmini_2",
+		"bergamot":     "bergamot",
+		"pickle":       "pickle",
 	} {
 		got, err := yamProfileFor(platform)
 		if err != nil || got != want {
 			t.Fatalf("yamProfileFor(%q) = %q, %v; want %q", platform, got, err, want)
 		}
 	}
-	if _, err := yamProfileFor("yandexchiron"); err == nil {
+	if _, err := yamProfileFor("chiron"); err == nil {
 		t.Fatal("yamProfileFor must reject platforms without a profile")
 	}
 }

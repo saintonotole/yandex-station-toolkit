@@ -150,8 +150,8 @@ func TestParseDNSMessageTruncated(t *testing.T) {
 
 func TestHostnameModel(t *testing.T) {
 	cases := map[string]string{
-		"yandexmicro-a1b2c3":    "", // ambiguous family (Лайт or Мини)
-		"yandexcucumber-xyz":    "Станция Миди",
+		"yandexmicro-a1b2c3":    "",             // ambiguous family (Лайт or Мини)
+		"yandex-station-midi-x": "Станция Миди", // real hostname (quasar rootfs)
 		"yandexmango-xyz":       "Станция Стрит",
 		"yandexsaturn-xyz":      "Умный хаб",
 		"some-pc":               "",

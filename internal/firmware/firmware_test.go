@@ -125,20 +125,6 @@ func TestTargetsKnown(t *testing.T) {
 			t.Fatalf("no target for %s", p)
 		}
 	}
-	// Identifier aliases a station may report instead of the OTA name.
-	for alias, want := range map[string]string{
-		"yandexmini2":    "yandexmini_2",
-		"yandexminni":    "yandexmini",
-		"yandexbergamot": "bergamot",
-		"yandexpickle":   "pickle",
-		"yandexplum":     "plum",
-		"yandexcucumber": "cucumber",
-	} {
-		got, ok := TargetFor(alias)
-		if !ok || got.Platform != want {
-			t.Fatalf("alias %s must resolve to %s", alias, want)
-		}
-	}
 	if _, ok := TargetFor("yandexstation"); ok {
 		t.Fatal("yandexstation must not carry an unverified target")
 	}

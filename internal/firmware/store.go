@@ -60,26 +60,11 @@ func Targets() []Target {
 	return out
 }
 
-// platformAliases maps identifier spellings a station may report to the
-// registry's platform names. The OTA platform ("yandexmini_2", what
-// check_updates and the mirror use) is authoritative, but mDNS and
-// device-tree spellings differ ("yandexmini2", "yandexminni" — the Mini
-// first-version's mDNS platform, "yandexcucumber").
-var platformAliases = map[string]string{
-	"yandexmini2":    "yandexmini_2",
-	"yandexminni":    "yandexmini",
-	"yandexbergamot": "bergamot",
-	"yandexpickle":   "pickle",
-	"yandexplum":     "plum",
-	"yandexcucumber": "cucumber",
-}
-
 // TargetFor returns the vulnerable version for a station platform.
+// The platform names are the quasar.cfg "deviceType" values, which equal
+// the OTA registry keys (verified from the official firmware images).
 func TargetFor(platform string) (Target, bool) {
 	p := strings.ToLower(strings.TrimSpace(platform))
-	if a, ok := platformAliases[p]; ok {
-		p = a
-	}
 	for _, t := range targets {
 		if t.Platform == p {
 			return t, true

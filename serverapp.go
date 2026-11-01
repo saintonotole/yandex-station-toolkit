@@ -442,8 +442,8 @@ func (a *App) emitServerState() {
 
 // emitFirmwareTargets reports the vulnerable-version registry and what is
 // already downloaded, plus which platforms were actually seen on the LAN.
-// Device platforms resolve through the registry aliases so a Mini 2 seen
-// as "yandexmini2" lights up the "yandexmini_2" target's badge.
+// Device platforms are the quasar.cfg deviceType values, which equal the
+// registry keys, so a seen platform lights up its target's badge directly.
 func (a *App) emitFirmwareTargets() {
 	seen := map[string]bool{}
 	a.mu.Lock()
